@@ -5,6 +5,7 @@
 #define MAX_LEN 20
 
 void init_shell() {
+		printf("\033[1;32m");
     printf("\n\n******************"
         "************************");
     printf("\n\n\n\t**** Surf Shell ****");
@@ -13,15 +14,16 @@ void init_shell() {
         "***********************");
     printf("\n\n");
     sleep(1);
+		printf("\033[1;36m");
 }
 
 void getUserStringInput(char *str, char *reference) {
-	printf("%s", str);
+	printf("\n%s\n", str);
 	scanf("%s", reference);
 }
 
 void getUserIntInput(char *str, int *reference) {
-	printf("%s", str);
+	printf("\n%s\n", str);
 	scanf("%i", reference);
 }
 
@@ -34,7 +36,7 @@ int main(void){
 
 	getUserStringInput("Qual comando quer executar?", command);
 	getUserIntInput("Quantos argumentos você quer digitar?", &numberOfArguments);
-	char arguments[80];
+	char arguments[numberOfArguments+1];
 	arguments[0] = command;
 
 	int i;
@@ -43,9 +45,9 @@ int main(void){
 		getUserStringInput("Insira o argumento:", argument);
 		arguments[i] = argument;
 	}
-	printf("%s", command);
-	printf("%s", path);
-	printf("%i", numberOfArguments);
+	printf("%s\n", command);
+	printf("%s\n", path);
+	printf("%i\n", numberOfArguments);
 	// pid_t child_pid = fork();
 	// if (child_pid == 0) {
 	// 	//Run ping command
