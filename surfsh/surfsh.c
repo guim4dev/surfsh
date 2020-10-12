@@ -1,8 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <signal.h>
 #define BASE_LEN 50
 
 void init_shell() {
@@ -40,18 +42,20 @@ int main(void){
 
 	char path[2*BASE_LEN] = "/bin/";
 	char command[BASE_LEN];
-	char argument[BASE_LEN];
 	int numberOfArguments = 0;
 
 	getUserStringInput("Qual comando quer executar?", command);
 	strcat(path, command);
 	getUserIntInput("Quantos argumentos você quer digitar?", &numberOfArguments);
-	char* arguments[numberOfArguments+2];
+	char *arguments[numberOfArguments+2];
+	char *argument;
+
 	arguments[0] = command;
 	arguments[numberOfArguments+1] = NULL;
 
 	int i;
 	for (i = 1; i <= numberOfArguments; ++i) {
+		argument = malloc(BASE_LEN);
 		getUserStringInput("Insira o argumento:", argument);
 		arguments[i] = argument;
 	}
