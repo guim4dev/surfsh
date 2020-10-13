@@ -2,20 +2,21 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <sys/wait.h>
 #include <signal.h>
 #define BASE_LEN 50
 
-// static void run_shell();
+static void run_shell();
 static void init_shell();
 static void getUserStringInput(char *str, char *reference);
 static void getUserIntInput(char *str, int *reference);
 
 void sig_handler(int signo) {
-  // if (signo == SIGUSR1) {
-	// 	run_shell();
-	// }
+  if (signo == SIGUSR1) {
+		run_shell();
+	}
 }
 
 void init_shell() {
@@ -43,7 +44,7 @@ void getUserIntInput(char *str, int *reference) {
 	printf("\033[1;36m");
 	printf("%s\n", str);
 	printf("\033[1;32m");
-	while ((scanf("%i", reference)) == 0) { // Nem sucesso nem EOF (sucesso = 1, EOF = -1)
+	while ((scanf("%i", reference)) != 1) { // Quando não for sucesso
 		// Limpar
 		scanf("%*[^\n]");
 		printf("\033[1;36m");
@@ -58,7 +59,15 @@ void getUserIntInput(char *str, int *reference) {
 }
 
 void run_shell() {
-	char path[2*BASE_LEN] = "/bin/";
+	char path[2*BASE_LEN];
+	char basePath[BASE_LEN];
+	#ifdef __linux__ // LINUX
+		strcpy(basePath,"/bin/");
+	#else // MACOS
+		strcpy(basePath,"/sbin/");
+	#endif
+	strcpy(path, basePath);
+
 	char command[BASE_LEN];
 	int numberOfArguments = 0;
 
