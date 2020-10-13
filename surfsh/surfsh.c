@@ -51,6 +51,8 @@ void getUserIntInput(char *str, int *reference) {
 		printf("Valor não era um número inteiro. Por favor, insira novamente:\n");
 		printf("\033[1;32m");
 	}
+	// Limpar para não interferir na próxima chamada
+	scanf("%*[^\n]");
 	printf("\033[0m");
 	printf("\n");
 }
