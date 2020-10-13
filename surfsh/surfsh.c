@@ -7,6 +7,17 @@
 #include <signal.h>
 #define BASE_LEN 50
 
+// static void run_shell();
+static void init_shell();
+static void getUserStringInput(char *str, char *reference);
+static void getUserIntInput(char *str, int *reference);
+
+void sig_handler(int signo) {
+  // if (signo == SIGUSR1) {
+	// 	run_shell();
+	// }
+}
+
 void init_shell() {
 		printf("\033[1;32m");
     printf("\n\n******************"
@@ -32,14 +43,19 @@ void getUserIntInput(char *str, int *reference) {
 	printf("\033[1;36m");
 	printf("%s\n", str);
 	printf("\033[1;32m");
-	scanf("%i", reference);
+	while ((scanf("%i", reference)) == 0) { // Nem sucesso nem EOF (sucesso = 1, EOF = -1)
+		// Limpar
+		scanf("%*[^\n]");
+		printf("\033[1;36m");
+		// Repetir pedido no loop
+		printf("Valor não era um número inteiro. Por favor, insira novamente:\n");
+		printf("\033[1;32m");
+	}
 	printf("\033[0m");
 	printf("\n");
 }
 
-int main(void){
-	init_shell();
-
+void run_shell() {
 	char path[2*BASE_LEN] = "/bin/";
 	char command[BASE_LEN];
 	int numberOfArguments = 0;
@@ -63,12 +79,19 @@ int main(void){
 	pid_t child_pid = fork();
 	if (child_pid == 0) {
 		execv(path, arguments);
-		return 0;
 	}
 	else {
 		wait(NULL);
 		printf("\033[1;32m");
 		printf("\nTarefa concluída.\n");
-		return 0;
 	}
+}
+
+int main(void) {
+	int pid = getpid();
+	printf("%d", pid);
+	signal(SIGINT, sig_handler);
+	init_shell();
+	run_shell();
+	return 0;
 }
