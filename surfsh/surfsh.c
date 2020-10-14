@@ -36,6 +36,8 @@ void getUserStringInput(char *str, char *reference) {
 	printf("%s\n", str);
 	printf("\033[1;32m");
 	scanf("%s", reference);
+	// Limpar para não interferir na próxima chamada
+	scanf("%*[^\n]");
 	printf("\033[0m");
 	printf("\n");
 }
@@ -58,6 +60,13 @@ void getUserIntInput(char *str, int *reference) {
 	printf("\n");
 }
 
+int pathNotExecutable(char *path) {
+	if ((access(path, F_OK) != -1) && (access(path, X_OK) != -1)) {
+		return 0;
+	}
+	return 1;
+}
+
 void run_shell() {
 	char path[2*BASE_LEN];
 	char basePath[BASE_LEN];
@@ -73,6 +82,11 @@ void run_shell() {
 
 	getUserStringInput("Qual comando quer executar?", command);
 	strcat(path, command);
+	while(pathNotExecutable(path)) {
+		strcpy(path, basePath);
+		getUserStringInput("Comando inválido. Por favor, insira novamente:", command);
+		strcat(path, command);
+	}
 	getUserIntInput("Quantos argumentos você quer digitar?", &numberOfArguments);
 	char *arguments[numberOfArguments+2];
 	char *argument;
