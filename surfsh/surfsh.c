@@ -46,6 +46,7 @@ void getUserIntInput(char *str, int *reference) {
 	printf("\033[1;36m");
 	printf("%s\n", str);
 	printf("\033[1;32m");
+	// Tratamento de erro para entradas com números inteiros
 	while ((scanf("%i", reference)) != 1) { // Quando não for sucesso
 		// Limpar
 		scanf("%*[^\n]");
@@ -79,21 +80,24 @@ void run_shell() {
 
 	char command[BASE_LEN];
 	int numberOfArguments = 0;
-
+	// PASSO 1
 	getUserStringInput("Qual comando quer executar?", command);
 	strcat(path, command);
+	// VALIDANDO ERRO PASSO 1 - enquanto nao for executavel, perguntamos para o usuario ate ele fornecer um comando válido
 	while(pathNotExecutable(path)) {
 		strcpy(path, basePath);
 		getUserStringInput("Comando inválido. Por favor, insira novamente:", command);
 		strcat(path, command);
 	}
+	// PASSO 3
 	getUserIntInput("Quantos argumentos você quer digitar?", &numberOfArguments);
 	char *arguments[numberOfArguments+2];
 	char *argument;
 
-	arguments[0] = command;
-	arguments[numberOfArguments+1] = NULL;
+	arguments[0] = command; // setando primeiro item do array arguments para o comando em si
+	arguments[numberOfArguments+1] = NULL; // setando ultimo item do array para NULL
 
+	// PASSO 5 - perguntamos os argumentos numberOfArguments vezes e armazenamos nas posições corretas do array
 	int i;
 	for (i = 1; i <= numberOfArguments; ++i) {
 		argument = malloc(BASE_LEN);
@@ -101,10 +105,12 @@ void run_shell() {
 		arguments[i] = argument;
 	}
 
+	// PASSO 6
 	pid_t child_pid = fork();
-	if (child_pid == 0) {
-		execv(path, arguments);
+	if (child_pid == 0) { // roda somente no processo filho
+		execv(path, arguments); // execv passando path e array com os argumentos
 	}
+	// PASSO 7 - roda somente no processo pai, faz o wait do processo filho
 	else {
 		wait(NULL);
 		printf("\033[1;32m");
@@ -113,8 +119,6 @@ void run_shell() {
 }
 
 int main(void) {
-	int pid = getpid();
-	printf("%d", pid);
 	signal(SIGINT, sig_handler);
 	init_shell();
 	run_shell();
