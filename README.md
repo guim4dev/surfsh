@@ -1,5 +1,5 @@
 # surfsh
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\
 Custom Shell Project
 Created during PLE 2020 at UFRJ, as a mandatory project for the Operational Systems lecture.
 
