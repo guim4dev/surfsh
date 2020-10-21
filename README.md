@@ -3,6 +3,17 @@
 Custom Shell Project
 Created during PLE 2020 at UFRJ, as a mandatory project for the Operational Systems lecture.
 
+## Running the Project
+Para rodar o Surf Shell, faça o seguinte passo a passo, dentro do diretório do projeto:
+```shell
+# Entrar na pasta principal do projeto
+> cd surfsh/
+# Compilar e gerar o executável
+> make compile
+# Rodar programa
+> ./surfsh
+```
+
 ## License
 
 The MIT License (MIT)
