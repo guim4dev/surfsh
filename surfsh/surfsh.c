@@ -17,7 +17,7 @@ int restartable = 1;
 
 void sig_handler(int signo) {
   if (signo == SIGUSR1 && restartable == 1) {
-	  	printf("\nReinicando shell...\n");
+	  printf("\nReinicando shell...\n");
 		run_shell();
 		exit(0);
 	}
@@ -52,8 +52,7 @@ void getUserIntInput(char *str, int *reference) {
 	printf("%s\n", str);
 	printf("\033[1;32m");
 	fgets(input, BASE_LEN, stdin);
-    *reference = (int) strtol(input, &endptr, 10);
-
+  *reference = (int) strtol(input, &endptr, 10);
 	printf("\033[0m");
 	printf("\n");
 }
@@ -66,7 +65,15 @@ int pathNotExecutable(char *path) {
 }
 
 void run_shell() {
+	// Forçando Unblock no sinal SIGUSR1, pra podermos chamar N vezes
+	sigset_t sig_set;
+	sigemptyset( &sig_set );
+	sigaddset( &sig_set, SIGUSR1 );
+	sigprocmask(SIG_UNBLOCK, &sig_set, NULL);
+	// Forçando para que seja restartavel
 	restartable = 1;
+
+	// Iniciando variavel de path e tratando para sistemas linux e OSX
 	char path[2*BASE_LEN];
 	char basePath[BASE_LEN];
 	#ifdef __linux__ // LINUX
