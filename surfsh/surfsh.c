@@ -13,10 +13,13 @@ static void init_shell();
 static void getUserStringInput(char *str, char *reference);
 static void getUserIntInput(char *str, int *reference);
 
+int restartable = 1;
+
 void sig_handler(int signo) {
-  if (signo == SIGUSR1) {
-	  	printf("PEGUEI!");
+  if (signo == SIGUSR1 && restartable == 1) {
+	  	printf("\nReinicando shell...\n");
 		run_shell();
+		exit(0);
 	}
 }
 
@@ -63,6 +66,7 @@ int pathNotExecutable(char *path) {
 }
 
 void run_shell() {
+	restartable = 1;
 	char path[2*BASE_LEN];
 	char basePath[BASE_LEN];
 	#ifdef __linux__ // LINUX
@@ -96,7 +100,7 @@ void run_shell() {
 	char text[BASE_LEN];
 	char num[BASE_LEN];
 	for (i = 1; i <= numberOfArguments; ++i) {
-		sprintf(num, "%d", i);
+		sprintf(num, "%d:", i);
 		strcpy(text, "Insira o argumento ");
 		strcat(text, num);
 		argument = malloc(BASE_LEN);
@@ -104,7 +108,8 @@ void run_shell() {
 		arguments[i] = argument;
 	}
 
-	// PASSO 6
+	// PASSO 6 - a partir daqui, nao podemos dar restart usando SIGUSR1
+	restartable = 0;
 	pid_t child_pid = fork();
 	if (child_pid == 0) { // roda somente no processo filho
 		execv(path, arguments); // execv passando path e array com os argumentos
@@ -118,7 +123,7 @@ void run_shell() {
 }
 
 int main(void) {
-	signal(SIGINT, sig_handler);
+	signal(SIGUSR1, sig_handler);
 	init_shell();
 	run_shell();
 	return 0;
