@@ -15,12 +15,13 @@ static void getUserIntInput(char *str, int *reference);
 
 void sig_handler(int signo) {
   if (signo == SIGUSR1) {
+	  	printf("PEGUEI!");
 		run_shell();
 	}
 }
 
 void init_shell() {
-		printf("\033[1;32m");
+	printf("\033[1;32m");
     printf("\n\n******************"
         "************************");
     printf("\n\n\n\t**** Surf Shell ****");
@@ -35,28 +36,22 @@ void getUserStringInput(char *str, char *reference) {
 	printf("\033[1;36m");
 	printf("%s\n", str);
 	printf("\033[1;32m");
-	scanf("%s", reference);
+	fgets(reference, BASE_LEN, stdin);
+	reference[strlen(reference) -1] = '\0';
 	// Limpar para não interferir na próxima chamada
-	scanf("%*[^\n]");
 	printf("\033[0m");
 	printf("\n");
 }
 
 void getUserIntInput(char *str, int *reference) {
+	char *input;
+	char *endptr = NULL;
 	printf("\033[1;36m");
 	printf("%s\n", str);
 	printf("\033[1;32m");
-	// Tratamento de erro para entradas com números inteiros
-	while ((scanf("%i", reference)) != 1) { // Quando não for sucesso
-		// Limpar
-		scanf("%*[^\n]");
-		printf("\033[1;36m");
-		// Repetir pedido no loop
-		printf("Valor não era um número inteiro. Por favor, insira novamente:\n");
-		printf("\033[1;32m");
-	}
-	// Limpar para não interferir na próxima chamada
-	scanf("%*[^\n]");
+	fgets(input, BASE_LEN, stdin);
+    *reference = (int) strtol(input, &endptr, 10);
+
 	printf("\033[0m");
 	printf("\n");
 }
