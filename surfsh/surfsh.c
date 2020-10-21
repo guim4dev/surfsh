@@ -38,7 +38,6 @@ void getUserStringInput(char *str, char *reference) {
 	printf("\033[1;32m");
 	fgets(reference, BASE_LEN, stdin);
 	reference[strlen(reference) -1] = '\0';
-	// Limpar para não interferir na próxima chamada
 	printf("\033[0m");
 	printf("\n");
 }
@@ -94,9 +93,14 @@ void run_shell() {
 
 	// PASSO 5 - perguntamos os argumentos numberOfArguments vezes e armazenamos nas posições corretas do array
 	int i;
+	char text[BASE_LEN];
+	char num[BASE_LEN];
 	for (i = 1; i <= numberOfArguments; ++i) {
+		sprintf(num, "%d", i);
+		strcpy(text, "Insira o argumento ");
+		strcat(text, num);
 		argument = malloc(BASE_LEN);
-		getUserStringInput("Insira o argumento:", argument);
+		getUserStringInput(text, argument);
 		arguments[i] = argument;
 	}
 
