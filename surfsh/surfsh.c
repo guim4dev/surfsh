@@ -20,6 +20,7 @@ void sig_handler(int signo) {
   if (signo == SIGUSR1) {
 		// Atualizamos a variável para reinicarmos o estado do sistema e voltarmos ao passo inicial
 		shouldRestart = 1;
+		printf("Aperte ENTER para reiniciar o SurfSh\n");
 	}
 }
 
@@ -28,8 +29,7 @@ void init_shell() {
     printf("\n\n******************"
         "************************");
     printf("\n\n\n\t**** Surf Shell ****");
-    printf("\n\n\t-A Shell mais braba já feita-");
-    printf("\n\n\n\n*******************"
+    printf("\n\n\n*******************"
         "***********************");
     printf("\n\n");
     sleep(1);
