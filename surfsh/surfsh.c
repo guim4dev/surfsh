@@ -79,7 +79,7 @@ void run_shell() {
 	int numberOfArguments = 0;
 	// PASSO 1
 	getUserStringInput("Qual comando quer executar?", command);
-	if (shouldRestart == 1) {
+	if (shouldRestart) {
 		return run_shell();
 	}
 	strcat(path, command);
@@ -88,7 +88,7 @@ void run_shell() {
 		strcpy(path, basePath);
 		getUserStringInput("Comando inválido. Por favor, insira novamente:", command);
 		// Podemos reiniciar aqui
-		if (shouldRestart == 1) {
+		if (shouldRestart) {
 			return run_shell();
 		}
 		strcat(path, command);
@@ -96,7 +96,7 @@ void run_shell() {
 	// PASSO 3
 	getUserIntInput("Quantos argumentos você quer digitar?", &numberOfArguments);
 	// Podemos reiniciar aqui
-	if (shouldRestart == 1) {
+	if (shouldRestart) {
 		return run_shell();
 	}
 	char *arguments[numberOfArguments+2];
@@ -116,7 +116,7 @@ void run_shell() {
 		argument = malloc(BASE_LEN);
 		getUserStringInput(text, argument);
 		// Podemos reinicar aqui
-		if (shouldRestart == 1) {
+		if (shouldRestart) {
 			return run_shell();
 		}
 		arguments[i] = argument;
