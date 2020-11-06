@@ -13,13 +13,13 @@ static void init_shell();
 static void getUserStringInput(char *str, char *reference);
 static void getUserIntInput(char *str, int *reference);
 
-int restartable = 1;
+int shouldRestart = 0;
 
+// Handler do signal
 void sig_handler(int signo) {
-  if (signo == SIGUSR1 && restartable == 1) {
-	  printf("\nReinicando shell...\n");
-		run_shell();
-		exit(0);
+  if (signo == SIGUSR1) {
+		// Atualizamos a variável para reinicarmos o estado do sistema e voltarmos ao passo inicial
+		shouldRestart = 1;
 	}
 }
 
@@ -65,15 +65,7 @@ int pathNotExecutable(char *path) {
 }
 
 void run_shell() {
-	// Forçando Unblock no sinal SIGUSR1, pra podermos chamar N vezes
-	sigset_t sig_set;
-	sigemptyset( &sig_set );
-	sigaddset( &sig_set, SIGUSR1 );
-	sigprocmask(SIG_UNBLOCK, &sig_set, NULL);
-	// Forçando para que seja restartavel
-	restartable = 1;
-
-	// Iniciando variavel de path e tratando para sistemas linux e OSX
+	shouldRestart = 0;
 	char path[2*BASE_LEN];
 	char basePath[BASE_LEN];
 	#ifdef __linux__ // LINUX
@@ -81,21 +73,32 @@ void run_shell() {
 	#else // MACOS
 		strcpy(basePath,"/sbin/");
 	#endif
-	strcpy(path, basePath);
 
+	strcpy(path, basePath);
 	char command[BASE_LEN];
 	int numberOfArguments = 0;
 	// PASSO 1
 	getUserStringInput("Qual comando quer executar?", command);
+	if (shouldRestart == 1) {
+		return run_shell();
+	}
 	strcat(path, command);
 	// VALIDANDO ERRO PASSO 1 - enquanto nao for executavel, perguntamos para o usuario ate ele fornecer um comando válido
 	while(pathNotExecutable(path)) {
 		strcpy(path, basePath);
 		getUserStringInput("Comando inválido. Por favor, insira novamente:", command);
+		// Podemos reiniciar aqui
+		if (shouldRestart == 1) {
+			return run_shell();
+		}
 		strcat(path, command);
 	}
 	// PASSO 3
 	getUserIntInput("Quantos argumentos você quer digitar?", &numberOfArguments);
+	// Podemos reiniciar aqui
+	if (shouldRestart == 1) {
+		return run_shell();
+	}
 	char *arguments[numberOfArguments+2];
 	char *argument;
 
@@ -112,11 +115,14 @@ void run_shell() {
 		strcat(text, num);
 		argument = malloc(BASE_LEN);
 		getUserStringInput(text, argument);
+		// Podemos reinicar aqui
+		if (shouldRestart == 1) {
+			return run_shell();
+		}
 		arguments[i] = argument;
 	}
 
 	// PASSO 6 - a partir daqui, nao podemos dar restart usando SIGUSR1
-	restartable = 0;
 	pid_t child_pid = fork();
 	if (child_pid == 0) { // roda somente no processo filho
 		execv(path, arguments); // execv passando path e array com os argumentos
