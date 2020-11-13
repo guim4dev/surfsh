@@ -32,7 +32,6 @@ void init_shell() {
     printf("\n\n\n*******************"
         "***********************");
     printf("\n\n");
-    sleep(1);
 }
 
 void getUserStringInput(char *str, char *reference) {
@@ -46,13 +45,24 @@ void getUserStringInput(char *str, char *reference) {
 }
 
 void getUserIntInput(char *str, int *reference) {
-	char *input;
+	char input[BASE_LEN] = "";
 	char *endptr = NULL;
 	printf("\033[1;36m");
 	printf("%s\n", str);
 	printf("\033[1;32m");
-	fgets(input, BASE_LEN, stdin);
-  *reference = (int) strtol(input, &endptr, 10);
+	int incorrectlyAnswered = 1;
+	// Perguntamos para o usuário até ele fornecer um valor que seja um número natural 
+	while(incorrectlyAnswered) {
+		fgets(input, BASE_LEN, stdin);
+		if (!strcmp(input, "0\n") || atoi(input) > 0) {
+			*reference = (int) strtol(input, &endptr, 10);
+			incorrectlyAnswered = 0;
+		} else {
+			printf("\033[1;36m");
+			printf("Valor não é válido, por favor insira um número natural:\n");
+			printf("\033[1;32m");
+		}
+	}
 	printf("\033[0m");
 	printf("\n");
 }

@@ -8,7 +8,7 @@ CFLAGS  = -Wall
 # the build target executable:
 TARGET = surfsh
 
-compile: $(TARGET)
+all: $(TARGET)
 
 $(TARGET): $(TARGET).c
 	$(CC) $(CFLAGS) -o $(TARGET) $(TARGET).c
